@@ -2,9 +2,10 @@
   "name": "-backend-course-2025-6",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon main.js -h localhost -p 3000 -c ./cache"
   },
   "repository": {
     "type": "git",
