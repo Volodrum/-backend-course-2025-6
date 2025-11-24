@@ -49,7 +49,10 @@ const swaggerDocument = {
     description: 'API для управління інвентаризацією (Express Version)',
   },
   servers: [
-    { url: `http://${options.host}:${options.port}` }
+    { 
+      url: `http://localhost:${options.port}`, 
+      description: 'Local server' 
+    }
   ],
   paths: {
     '/inventory': {
@@ -164,9 +167,12 @@ app.get('/inventory', (req, res) => {
 
 // POST /register (Multipart/form-data)
 app.post('/register', (req, res, next) => {
-  const form = new formidable.IncomingForm();
-  form.uploadDir = cachePath;
-  form.keepExtensions = true;
+  const form = new formidable.IncomingForm({
+    uploadDir: cachePath,
+    keepExtensions: true,
+    allowEmptyFiles: true,
+    minFileSize: 0
+  });
 
   form.parse(req, (err, fields, files) => {
     if (err) {
@@ -174,16 +180,26 @@ app.post('/register', (req, res, next) => {
     }
     const name = Array.isArray(fields.inventory_name) ? fields.inventory_name[0] : fields.inventory_name;
     const description = Array.isArray(fields.description) ? fields.description[0] : fields.description;
-    const photoFile = Array.isArray(files.photo) ? files.photo[0] : files.photo;
+    const photoFile = files.photo ? (Array.isArray(files.photo) ? files.photo[0] : files.photo) : null;
 
     if (!name) return res.status(400).send('Bad Request: name required');
+
+    let photoName = null;
+    if (photoFile && photoFile.size > 0) {
+        photoName = path.basename(photoFile.filepath);
+    } else {
+        // Якщо файл пустий (розмір 0), видаляємо створений пустий temp-файл
+        if (photoFile) {
+            try { fs.unlinkSync(photoFile.filepath); } catch(e) {}
+        }
+    }
 
     const items = readDb();
     const newItem = {
       id: Date.now().toString(),
       name: name,
       description: description || '',
-      photo: photoFile ? path.basename(photoFile.filepath) : null
+      photo: photoName
     };
 
     items.push(newItem);
@@ -203,8 +219,9 @@ app.post('/search', (req, res) => {
 
   if (item) {
     const responseData = { ...item };
-    if (showPhoto && item.photo) {
-      responseData.photoUrl = `/inventory/${item.id}/photo`;
+
+    if (!showPhoto) {
+      delete responseData.photo;
     }
     res.json(responseData);
   } else {
