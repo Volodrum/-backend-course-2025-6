@@ -1,0 +1,82 @@
+{
+	"info": {
+		"name": "Backend Course API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Register Item (Upload Photo)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{ "key": "inventory_name", "value": "Laptop", "type": "text" },
+						{ "key": "description", "value": "Gaming laptop", "type": "text" },
+						{ "key": "photo", "type": "file", "src": [] }
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3000/register",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "3000",
+					"path": ["register"]
+				}
+			}
+		},
+		{
+			"name": "2. Get All Inventory",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:3000/inventory"
+			}
+		},
+		{
+			"name": "3. Search Item (Web Form Logic)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{ "key": "id", "value": "REPLACE_WITH_ID", "type": "text" },
+						{ "key": "includePhoto", "value": "on", "type": "text" }
+					]
+				},
+				"url": "http://localhost:3000/search"
+			}
+		},
+		{
+			"name": "4. Get Item Details",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:3000/inventory/REPLACE_WITH_ID"
+			}
+		},
+		{
+			"name": "5. Update Item",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Updated Laptop\",\n    \"description\": \"Updated desc\"\n}",
+					"options": { "raw": { "language": "json" } }
+				},
+				"url": "http://localhost:3000/inventory/REPLACE_WITH_ID"
+			}
+		},
+		{
+			"name": "6. Delete Item",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "http://localhost:3000/inventory/REPLACE_WITH_ID"
+			}
+		}
+	]
+}
